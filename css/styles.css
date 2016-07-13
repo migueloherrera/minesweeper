@@ -68,3 +68,66 @@ table {
 
 /* STARTS HERE */
 
+body {
+  text-align: center;
+  font-family: arial, sans-serif;
+}
+
+h1 {
+  width: 500px;
+  margin: 0 auto;
+  font-size: 2em;
+  background: #0055E4;
+  color: #FFF4CD;
+  padding: 5px;
+}
+
+#status {
+  margin: 0 auto;
+  width: 500px;
+  height: 55px;
+  background: #C0C0C0;
+  border: 2px solid #808080;
+  padding: 5px;
+}
+
+#minesleft, #timer {
+  font-size: 2em;
+  font-weight: bold;
+  padding: 5px;
+  background: black;
+  color: red;
+}
+
+#minesleft {
+  width: 50px;
+  float: left;
+}
+
+#timer {
+  width: 50px;
+  float: right;
+}
+
+#container {
+  margin: 0 auto;
+  min-width: 300px;
+  max-width: 500px;
+  min-height: 300px;
+  background: #C0C0C0;
+}
+
+#play {
+  width: 40px;
+  height: 40px;
+  float: left;
+  background: yellow;
+  font-size: 32px;
+  border: 2px solid #808080;
+  margin-left: 170px;
+}
+
+#play:hover {
+  cursor: pointer;
+  border-color: #0055E4;
+}
