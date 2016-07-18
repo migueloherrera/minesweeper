@@ -114,7 +114,7 @@ h1 {
   margin: 0 auto;
   width: 330px;
   height: 430px;
-  background: #C0C0C0;
+
 }
 
 #play {
@@ -137,11 +137,22 @@ h1 {
 .cell {
   width: 30px;
   height: 30px;
-  border: 1px solid black;
+  border: 3px solid #7B7B7B;
+  border-style: outset;
+  cursor: pointer;
+  background: #BDBDBD;
   float: left;
 }
 
+.uncovered {
+  border: 1px solid #7B7B7B;
+  background: #E4E4E4;
+}
+
 .edge {
+  width: 30px;
+  height: 30px;
   background: #0055E4;
   border: none;
+  float: left;
 }
