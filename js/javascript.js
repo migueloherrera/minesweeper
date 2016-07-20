@@ -30,14 +30,12 @@ function Grid(size) {
       var mine = "#c"+row+"_"+col;
       
       if (this.mines.includes(mine)) {
-        console.log(mine + " already exists");
         i--;
       } else {
         this.mines.push(mine);
         $(mine).removeClass("empty");
       }
     }
-    console.log(this.mines);
   };
     
   // method that generates the numbers
@@ -57,35 +55,31 @@ function Grid(size) {
             } else {
               this.numbered["#c"+r1+"_"+c1] += 1;
             }
-            //$("#c"+r1+"_"+c1).text(this.numbered["#c"+r1+"_"+c1]);
             $("#c"+r1+"_"+c1).removeClass("empty");
           }
         }
       }
     }
-    console.log(this.numbered);
   };
     
   // method that uncovers empty cells
   this.uncover = function(c, size) {
     
-    if (this.mines.includes(c)) {
-      console.log(c + " is a mine... You lost");
+    if (this.mines.includes(c)) { // there is a mine
       $(c).css("background","red");
       for (var i = 0; i < this.mines.length; i++){
         $(this.mines[i]).html('<i class="fa fa-bomb" aria-hidden="true"></i>');
       }
       $('#play').html('<i class="fa fa-frown-o" aria-hidden="true"></i>');
-
-    } else if (this.numbered[c]) {
-      console.log(c + " is a numbered cell");
+      alert("You lost!");
+      location.reload();
+    } else if (this.numbered[c]) { // there is a number
       $(c).text(this.numbered[c]);
       $(c).addClass("uncovered");
-    } else {
+    } else { // it is an empty cell
       var queue = [c];
       var numbers = this.numbered;
       while (queue.length > 0) {
-        console.log(queue);
         var last = queue.pop();
         var cell = last.slice(2).split("_");
         $(last).addClass("uncovered");
@@ -95,10 +89,9 @@ function Grid(size) {
         arr.forEach(function(e){
           var cellToSearch = "#c"+(row+e[0])+"_"+(col+e[1]);
           if (row+e[0] > 0 && row+e[0] < size && col+e[1] > 0 && col+e[1] < size) {
-            // conditions to add the current cell to the queue: to be empty, to be covered and not be in the queue
+            // conditions to add the current cell to the queue: to be empty, to be covered and not to be in the queue
             if ($(cellToSearch).hasClass("empty") && !$(cellToSearch).hasClass("uncovered") && !(queue.includes(cellToSearch))) {
               queue.push(cellToSearch);
-              console.log("added: "+cellToSearch);
             } 
             $(cellToSearch).addClass("uncovered");
             if (numbers[cellToSearch]) {
@@ -112,35 +105,70 @@ function Grid(size) {
 
 }
 
-function restart() {
-  alert("clicked");
+function check(arr) {
+  var x = document.getElementsByClassName("flag");
+  var f = [];
+  for (var i = 0; i < x.length; i++) {
+    f.push("#" + x[i].id);
+  }
+  if (f.sort().toString() == arr) {
+    alert("You have won!");
+    location.reload();
+  }
 }
 
+function startTimer() {
+  var x = parseInt($("#timer").text()) + 1;
+  $('#timer').text(x);
+  setTimeout(function() {startTimer()}, 1000);
+}
+
+// main
 $(document).ready(function(){
-  var grid = new Grid(11);
+  var gridsize = 9;
+  var numberofmines = 10;
+  var grid = new Grid(gridsize + 2);
+  var counter = true;
   grid.drawGrid();
-  grid.generateMines(10, 9);
-  grid.generateNumbers(10, 10);
+  grid.generateMines(numberofmines, gridsize);
+  grid.generateNumbers(numberofmines, gridsize + 1);
   $('#play').click(function(){
-    restart();
+    if (confirm("Restart game?")) {
+      location.reload();
+    }
   });
   $('.cell').mousedown(function(event) {
+    if (counter) {
+      counter = false;
+      startTimer();
+    }
     event.preventDefault();
     switch (event.which) {
     case 1:
       // Left Mouse button pressed
       if ( !$(this).hasClass("uncovered") && !$(this).hasClass("flag") ) {
-        grid.uncover("#"+$(this).prop('id'), 10);
+        grid.uncover("#"+$(this).prop('id'), gridsize + 1);
       }
       break;
     case 3:
       // Right Mouse button pressed
-      $(this).html('<i class="fa fa-flag-o" aria-hidden="true"></i>');
-      $(this).addClass("flag");// <---- toggleClass ---
-      var minesleft = $('#minesleft').text();
-      minesleft = parseInt(minesleft) - 1;
-      $('#minesleft').text(minesleft);
+      if ( !$(this).hasClass("uncovered") ) {
+        if ( $(this).hasClass("flag") ) {
+          $(this).html('');
+          $(this).removeClass("flag");
+          var minesleft = $('#minesleft').text();
+          minesleft = parseInt(minesleft) + 1;
+          $('#minesleft').text(minesleft);
+        } else {
+          $(this).html('<i class="fa fa-flag-o" aria-hidden="true"></i>');
+          $(this).addClass("flag");
+          var minesleft = $('#minesleft').text();
+          minesleft = parseInt(minesleft) - 1;
+          $('#minesleft').text(minesleft);
+        } // end if
+      } // end if
       break;
-    }
+    } // end case
+    check(grid.mines.sort().toString());
   });
 });
